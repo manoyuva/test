@@ -1,0 +1,61 @@
+# =========================================================
+#  RJM Tv - Auto M3U Merger Configuration (Final + URL Support)
+# =========================================================
+
+settings:
+  source_list: creds.txt
+  output_file: Master.m3u
+  update_interval: 15
+  temp_dir: ./temp
+  log_file: ./logs/m3u_merge.log
+
+deduplication:
+  enabled: true
+  check_by: [extinf, url]
+  keep_first: true
+
+grouping:
+  enabled: true
+  section_format: "# ${source_name}.m3u — Channels: ${channel_count}"
+
+metadata_handling:
+  preserve_original: true
+  preserve_fields:
+    - tvg-id
+    - tvg-name
+    - tvg-logo
+    - group-title
+    - audio-track
+    - aspect-ratio
+  overwrite_missing: false
+
+output_format:
+  include_extm3u_header: true
+
+logging:
+  enabled: true
+  level: INFO
+
+runtime:
+  clean_temp_on_exit: true
+  max_retries_on_source_failure: 2
+  retry_delay_seconds: 5
+
+calculation:
+  enabled: true
+  auto_update_total_count: true
+  auto_update_section_counts: true
+  auto_update_updated_count: true
+  auto_generate_source_summary: true
+  emoji_assignment_enabled: true
+  emoji_assignment_persistent: true
+  emoji_mapping:
+    default: 📺
+  emoji_pool: [📺]
+  smart_greeting_enabled: true
+  show_next_update: true
+  greeting_ranges:
+    morning_start_hour: 6
+    afternoon_start_hour: 12
+    evening_start_hour: 16
+    night_start_hour: 18

@@ -1,0 +1,54 @@
+name: Master Generator
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"     # every 15 minutes
+  workflow_dispatch:            # manual trigger
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
+        run: pip install pyyaml pytz requests
+
+      - name: Run RJM M3U Merge Script
+        run: python3 .github/workflows/merge_m3u.py
+
+      - name: Commit generated Master.m3u and index.html
+        run: |
+          git config --global user.name "RJM AutoBot"
+          git config --global user.email "actions@github.com"
+          git add Master.m3u index.html || true
+          git diff --cached --quiet || git commit -m "🔁 Auto update Master.m3u + index.html"
+          git push
+
+      - name: Upload artifact for Pages
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: .   # upload repo root (includes Master.m3u + index.html)
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
