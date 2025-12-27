@@ -1,8 +1,8 @@
 name: STGLOC Auto Builder 🌐
 
 on:
-  schedule:
-    - cron: "*/30 * * * *"    # ⏰ Auto runs every 30 minutes
+ # schedule:
+   # - cron: "*/30 * * * *"    # ⏰ Auto runs every 30 minutes
   workflow_dispatch:
 
 concurrency:
